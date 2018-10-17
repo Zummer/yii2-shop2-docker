@@ -1,0 +1,26 @@
+# yii windows console commands
+**/yii.bat
+**/yii_test.bat
+**/init.bat
+
+# phpstorm project files
+.idea
+
+# vagrant files
+/vagrant
+/.vagrant
+Vagrantfile
+
+# composer vendor dir
+/vendor
+
+# composer itself is not needed
+composer.phar
+
+# composer lock file
+composer.lock
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+/phpunit.xml
