@@ -1,11 +1,27 @@
 version: '2'
 services:
-    composer:
-        image: composer
-        user: 1000:1000
-        working_dir: /app
+    phpmyadmin: # web интерфейс сервера базы данных
+        image: phpmyadmin/phpmyadmin
+        ports:
+          - 8183:80
+        environment:
+          - PMA_HOSTS=db-mysql,db-mysql-test # для выбора сервера бд из выпадающего списка
+    db-mysql: # сервер mysql с рабочей базой данных
+        image: mysql:5.7
         volumes:
-            - ./:/app
+          - mysql_data:/var/lib/mysql
+          - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
+        environment:
+          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+          MYSQL_DATABASE: ${MYSQL_DB_NAME}
+    db-mysql-test: # сервер mysql с тестовой базой данных
+        image: mysql:5.7
+        volumes:
+          - mysql_data_test:/var/lib/mysql
+          - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
+        environment:
+          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+          MYSQL_DATABASE: ${MYSQL_DB_NAME_TEST}
     nginx:
         image: nginx
         ports:
@@ -14,10 +30,14 @@ services:
             - ./:/app
             - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
         depends_on:
-            - web
-    web:
+            - php
+    php:
         build: docker/php
         user: 1000:1000
         working_dir: /app
         volumes:
             - ./:/app
+            - ~/.composer/cache:/var/www/.composer/cache
+volumes: # именованные тома
+  mysql_data: # рабочая база
+  mysql_data_test: # тестовая база
