@@ -8,6 +8,8 @@ services:
           - PMA_HOSTS=db-mysql,db-mysql-test # для выбора сервера бд из выпадающего списка
     db-mysql: # сервер mysql с рабочей базой данных
         image: mysql:5.7
+        ports:
+          - 3316:3306
         volumes:
           - mysql_data:/var/lib/mysql
           - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
@@ -16,6 +18,8 @@ services:
           MYSQL_DATABASE: ${MYSQL_DB_NAME}
     db-mysql-test: # сервер mysql с тестовой базой данных
         image: mysql:5.7
+        ports:
+          - 3326:3306
         volumes:
           - mysql_data_test:/var/lib/mysql
           - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
