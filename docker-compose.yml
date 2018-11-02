@@ -42,6 +42,14 @@ services:
         volumes:
             - ./:/app
             - ~/.composer/cache:/var/www/.composer/cache
+    memcached_server:
+        image: memcached:alpine
+
+    phpmemcachedadmin:
+       image: jacksoncage/phpmemcachedadmin
+       ports:
+         - 8093:80
+
 volumes: # именованные тома
   mysql_data: # рабочая база
   mysql_data_test: # тестовая база
