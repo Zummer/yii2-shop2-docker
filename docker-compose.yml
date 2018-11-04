@@ -12,7 +12,7 @@ services:
           - 3316:3306
         volumes:
           - mysql_data:/var/lib/mysql
-          - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
+          - ./docker/mysql/conf.d:/etc/mysql/conf.d
         environment:
           MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
           MYSQL_DATABASE: ${MYSQL_DB_NAME}
@@ -22,7 +22,6 @@ services:
           - 3326:3306
         volumes:
           - mysql_data_test:/var/lib/mysql
-          - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
         environment:
           MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
           MYSQL_DATABASE: ${MYSQL_DB_NAME_TEST}
@@ -42,6 +41,9 @@ services:
         volumes:
             - ./:/app
             - ~/.composer/cache:/var/www/.composer/cache
+        environment:
+          # внутри network default
+          - XDEBUG_CONFIG=remote_host=php
     memcached_server:
         image: memcached:alpine
 
