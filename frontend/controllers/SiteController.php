@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\services\auth\PasswordResetServiceInterface;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -12,13 +13,28 @@ use frontend\forms\ResetPasswordForm;
 use frontend\forms\SignupForm;
 use frontend\forms\ContactForm;
 use frontend\services\auth\SignupService;
-use frontend\services\auth\PasswordResetService;
 
 /**
  * Site controller
  */
 class SiteController extends Controller
 {
+    private $passwordResetService;
+    private $signupService;
+
+    public function __construct(
+        $id,
+        $module,
+        SignupService $signupService,
+        PasswordResetServiceInterface $passwordResetService,
+        $config = []
+    )
+    {
+        $this->passwordResetService = $passwordResetService;
+        $this->signupService = $signupService;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -154,7 +170,7 @@ class SiteController extends Controller
         $form = new SignupForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $user = (new SignupService())->signup($form);
+                $user = $this->signupService->signup($form);
                 if (Yii::$app->getUser()->login($user)) {
                     return $this->goHome();
                 }
@@ -179,7 +195,7 @@ class SiteController extends Controller
         $form = new PasswordResetRequestForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                (new PasswordResetService())->request($form);
+                $this->passwordResetService->request($form);
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
                 return $this->goHome();
             } catch (\DomainException $e) {
@@ -202,10 +218,8 @@ class SiteController extends Controller
      */
     public function actionResetPassword($token)
     {
-        $service = new PasswordResetService();
-
         try {
-            $service->validateToken($token);
+            $this->passwordResetService->validateToken($token);
         } catch (\DomainException $e) {
             Yii::$app->errorHandler->logException($e);
             Yii::$app->session->setFlash('error', $e->getMessage());
@@ -215,7 +229,7 @@ class SiteController extends Controller
         $form = new ResetPasswordForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $service->reset($token, $form);
+                $this->passwordResetService->reset($token, $form);
                 Yii::$app->session->setFlash('success', 'New password saved.');
                 return $this->goHome();
             } catch (\DomainException $e) {
