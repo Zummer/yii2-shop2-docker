@@ -4,7 +4,7 @@ namespace frontend\services\auth;
 use common\entities\User;
 use frontend\forms\SignupForm;
 
-class SignupService
+class SignupService implements SignupServiceInterface
 {
     public function signup(SignupForm $form): User
     {
