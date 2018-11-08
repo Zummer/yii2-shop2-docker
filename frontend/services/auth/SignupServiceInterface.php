@@ -6,5 +6,5 @@ use frontend\forms\SignupForm;
 
 interface SignupServiceInterface
 {
-    public function signup(SignupForm $form): User;
+    public function signup(SignupForm $form): void;
 }

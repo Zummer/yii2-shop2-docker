@@ -10,13 +10,13 @@ class PasswordResetService implements PasswordResetServiceInterface
 {
     private $supportEmail;
     private $mailer;
-    private $appName;
+    private $emailSubject;
 
-    public function __construct($supportEmail, MailerInterface $mailer, $appName)
+    public function __construct(array $supportEmail, MailerInterface $mailer, string $emailSubject)
     {
         $this->supportEmail = $supportEmail;
         $this->mailer = $mailer;
-        $this->appName = $appName;
+        $this->emailSubject = $emailSubject;
     }
 
     public function request(PasswordResetRequestForm $form): void
@@ -43,7 +43,7 @@ class PasswordResetService implements PasswordResetServiceInterface
             )
             ->setFrom($this->supportEmail)
             ->setTo($user->email)
-            ->setSubject('Password reset for ' . $this->appName)
+            ->setSubject($this->emailSubject)
             ->send();
 
         if (!$sent) {
