@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\services\AuthService;
 use frontend\services\auth\PasswordResetServiceInterface;
 use frontend\services\auth\SignupServiceInterface;
 use frontend\services\contact\ContactServiceInterface;
@@ -23,6 +24,7 @@ class SiteController extends Controller
     private $passwordResetService;
     private $signupService;
     private $contactService;
+    private $authService;
 
     public function __construct(
         $id,
@@ -30,12 +32,14 @@ class SiteController extends Controller
         SignupServiceInterface $signupService,
         PasswordResetServiceInterface $passwordResetService,
         ContactServiceInterface $contactService,
+        AuthService $authService,
         $config = []
     )
     {
         $this->passwordResetService = $passwordResetService;
         $this->signupService = $signupService;
         $this->contactService = $contactService;
+        $this->authService = $authService;
         parent::__construct($id, $module, $config);
     }
 
@@ -107,16 +111,22 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            $model->password = '';
+        $form = new LoginForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $user = $this->authService->auth($form);
+                $duration = $form->rememberMe ? 3600 * 24 * 30 : 0;
+                Yii::$app->user->login($user, $duration);
+                return $this->goBack();
+            } catch (\DomainException $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
 
-            return $this->render('login', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('login', [
+            'model' => $form,
+        ]);
     }
 
     /**

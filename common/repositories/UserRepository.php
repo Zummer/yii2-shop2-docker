@@ -66,5 +66,14 @@ class UserRepository implements UserRepositoryInterface
         }
         return $user;
     }
+
+    /**
+     * @param string $value
+     * @return User|null
+     */
+    public function findByUsernameOrEmail(string $value): ?User
+    {
+        return User::find()->andWhere(['or', ['username' => $value], ['email' => $value]])->one();
+    }
 }
 

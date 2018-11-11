@@ -33,4 +33,10 @@ interface UserRepositoryInterface
      * @return User
      */
     public function getByEmailConfirmToken(string $token): User;
+
+    /**
+     * @param string $value
+     * @return User|null
+     */
+    public function findByUsernameOrEmail(string $value): ?User;
 }
