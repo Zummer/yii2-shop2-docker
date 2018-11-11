@@ -15,10 +15,6 @@ class ContactForm extends Model
     public $body;
     public $verifyCode;
 
-
-    /**
-     * {@inheritdoc}
-     */
     public function rules()
     {
         return [
@@ -28,9 +24,6 @@ class ContactForm extends Model
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function attributeLabels()
     {
         return [
