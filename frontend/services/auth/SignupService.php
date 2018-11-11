@@ -37,9 +37,7 @@ class SignupService implements SignupServiceInterface
             $form->password
         );
 
-        if (!$user->save()) {
-            throw new \RuntimeException('Saving Error');
-        }
+        $this->save($user);
 
         $sent = $this->mailer
             ->compose(
@@ -61,14 +59,32 @@ class SignupService implements SignupServiceInterface
         if (empty($token)) {
             throw new \DomainException('Empty confirm token.');
         }
-        /* @var $user User */
+
+        $user = $this->getByEmailConfirmToken($token);
+        $user->confirmSignup();
+        $this->save($user);
+    }
+
+    /**
+     * @param User $user
+     */
+    private function save(User $user): void
+    {
+        if (!$user->save()) {
+            throw new \RuntimeException('Saving error.');
+        }
+    }
+
+    /**
+     * @param string $token
+     * @return User
+     */
+    private function getByEmailConfirmToken(string $token): User
+    {
         $user = User::findOne(['email_confirm_token' => $token]);
         if (!$user) {
             throw new \DomainException('User is not found.');
         }
-        $user->confirmSignup();
-        if (!$user->save()) {
-            throw new \RuntimeException('Saving error.');
-        }
+        return $user;
     }
 }
