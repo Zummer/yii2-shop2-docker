@@ -2,6 +2,7 @@
 namespace frontend\services\auth;
 
 use common\entities\User;
+use common\repositories\UserRepository;
 use frontend\forms\SignupForm;
 use yii\mail\MailerInterface;
 
@@ -9,16 +10,20 @@ class SignupService implements SignupServiceInterface
 {
     private $mailer;
     private $supportEmail;
-    /**
-     * @var string
-     */
     private $emailSubject;
+    private $users;
 
-    public function __construct(array $supportEmail, MailerInterface $mailer, string $emailSubject)
+    public function __construct(
+        array $supportEmail,
+        MailerInterface $mailer,
+        string $emailSubject,
+        UserRepository $users
+    )
     {
         $this->mailer = $mailer;
         $this->supportEmail = $supportEmail;
         $this->emailSubject = $emailSubject;
+        $this->users = $users;
     }
 
     public function signup(SignupForm $form): void
@@ -37,7 +42,7 @@ class SignupService implements SignupServiceInterface
             $form->password
         );
 
-        $this->save($user);
+        $this->users->save($user);
 
         $sent = $this->mailer
             ->compose(
@@ -54,37 +59,14 @@ class SignupService implements SignupServiceInterface
         }
     }
 
-    public function confirm($token): void
+    public function confirm(string $token): void
     {
         if (empty($token)) {
             throw new \DomainException('Empty confirm token.');
         }
 
-        $user = $this->getByEmailConfirmToken($token);
+        $user = $this->users->getByEmailConfirmToken($token);
         $user->confirmSignup();
-        $this->save($user);
-    }
-
-    /**
-     * @param User $user
-     */
-    private function save(User $user): void
-    {
-        if (!$user->save()) {
-            throw new \RuntimeException('Saving error.');
-        }
-    }
-
-    /**
-     * @param string $token
-     * @return User
-     */
-    private function getByEmailConfirmToken(string $token): User
-    {
-        $user = User::findOne(['email_confirm_token' => $token]);
-        if (!$user) {
-            throw new \DomainException('User is not found.');
-        }
-        return $user;
+        $this->users->save($user);
     }
 }
