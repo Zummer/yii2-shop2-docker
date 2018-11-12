@@ -4,6 +4,8 @@ namespace common\bootstrap;
 
 use shop\repositories\UserRepository;
 use shop\repositories\UserRepositoryInterface;
+use shop\services\auth\AuthService;
+use shop\services\auth\AuthServiceInterface;
 use shop\services\auth\PasswordResetServiceInterface;
 use shop\services\auth\SignupService;
 use shop\services\auth\SignupServiceInterface;
@@ -24,6 +26,7 @@ class SetUp implements BootstrapInterface
     {
         $container = Yii::$container;
 
+        $container->setSingleton(AuthServiceInterface::class, AuthService::class);
         $container->setSingleton(UserRepositoryInterface::class, UserRepository::class);
 
         $container->setSingleton(SignupServiceInterface::class, function () use ($app, $container) {
