@@ -2,15 +2,15 @@
 
 namespace common\bootstrap;
 
-use common\repositories\UserRepository;
-use common\repositories\UserRepositoryInterface;
-use frontend\services\auth\PasswordResetServiceInterface;
-use frontend\services\auth\SignupService;
-use frontend\services\auth\SignupServiceInterface;
-use frontend\services\contact\ContactService;
-use frontend\services\contact\ContactServiceInterface;
+use shop\repositories\UserRepository;
+use shop\repositories\UserRepositoryInterface;
+use shop\services\auth\PasswordResetServiceInterface;
+use shop\services\auth\SignupService;
+use shop\services\auth\SignupServiceInterface;
+use shop\services\contact\ContactService;
+use shop\services\contact\ContactServiceInterface;
 use Yii;
-use frontend\services\auth\PasswordResetService;
+use shop\services\auth\PasswordResetService;
 use yii\base\BootstrapInterface;
 use yii\mail\MailerInterface;
 use yii\base\Application;

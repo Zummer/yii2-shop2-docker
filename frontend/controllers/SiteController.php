@@ -2,19 +2,19 @@
 
 namespace frontend\controllers;
 
-use common\services\AuthService;
-use frontend\services\auth\PasswordResetServiceInterface;
-use frontend\services\auth\SignupServiceInterface;
-use frontend\services\contact\ContactServiceInterface;
+use shop\services\auth\AuthService;
+use shop\services\auth\PasswordResetServiceInterface;
+use shop\services\auth\SignupServiceInterface;
+use shop\services\contact\ContactServiceInterface;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\forms\LoginForm;
-use frontend\forms\PasswordResetRequestForm;
-use frontend\forms\ResetPasswordForm;
-use frontend\forms\SignupForm;
-use frontend\forms\ContactForm;
+use shop\forms\auth\LoginForm;
+use shop\forms\auth\PasswordResetRequestForm;
+use shop\forms\auth\ResetPasswordForm;
+use shop\forms\auth\SignupForm;
+use shop\forms\ContactForm;
 
 /**
  * Site controller
