@@ -16,18 +16,5 @@ return [
                 'domain' => $params['cookieDomain'],
             ],
         ],
-        'session' => [
-            'name' => '_session',
-            'cookieParams' => [
-                'domain' => $params['cookieDomain'],
-                'httpOnly' => true,
-            ],
-        ],
-        'urlManager' => [
-            'showScriptName' => true,
-        ],
-        'request' => [
-            'cookieValidationKey' => $params['cookieValidationKey'],
-        ],
     ],
 ];
