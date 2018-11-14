@@ -3,7 +3,7 @@ namespace shop\repositories;
 
 use shop\repositories\NotFoundException;
 use shop\repositories\UserRepositoryInterface;
-use shop\entities\User;
+use shop\entities\User\User;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -58,7 +58,7 @@ class UserRepository implements UserRepositoryInterface
 
     /**
      * @param array $conditions
-     * @return User
+     * @return \shop\entities\User\User
      */
     private function getByConditions(array $conditions): User
     {
@@ -71,7 +71,7 @@ class UserRepository implements UserRepositoryInterface
 
     /**
      * @param string $value
-     * @return User|null
+     * @return \shop\entities\User\User|null
      */
     public function findByUsernameOrEmail(string $value): ?User
     {

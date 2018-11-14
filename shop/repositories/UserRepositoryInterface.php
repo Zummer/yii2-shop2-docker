@@ -1,24 +1,24 @@
 <?php
 namespace shop\repositories;
 
-use shop\entities\User;
+use shop\entities\User\User;
 
 interface UserRepositoryInterface
 {
     /**
-     * @param \shop\entities\User $user
+     * @param \shop\entities\User\User $user
      */
     public function save(User $user): void;
 
     /**
      * @param string $email
-     * @return \shop\entities\User
+     * @return \shop\entities\User\User
      */
     public function getByEmail(string $email): User;
 
     /**
      * @param string $token
-     * @return \shop\entities\User|null
+     * @return \shop\entities\User\User|null
      */
     public function getByPasswordResetToken(string $token): User;
 
@@ -30,7 +30,7 @@ interface UserRepositoryInterface
 
     /**
      * @param string $token
-     * @return \shop\entities\User
+     * @return \shop\entities\User\User
      */
     public function getByEmailConfirmToken(string $token): User;
 
