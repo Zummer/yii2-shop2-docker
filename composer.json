@@ -18,7 +18,8 @@
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
-        "dmstr/yii2-adminlte-asset": "3.0.0-alpha1"
+        "dmstr/yii2-adminlte-asset": "3.0.0-alpha1",
+        "la-haute-societe/yii2-save-relations-behavior": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

@@ -1,9 +1,10 @@
 <?php
 namespace shop\entities\User;
-
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -15,11 +16,14 @@ use yii\web\IdentityInterface;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
+ * @property string $email_confirm_token
  * @property string $auth_key
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ *
+ * @property Network[] $networks
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -34,7 +38,7 @@ class User extends ActiveRecord implements IdentityInterface
         $user->setPassword($password);
         $user->created_at = time();
         $user->status = self::STATUS_WAIT;
-        $user->generateEmailConfirmToken();;
+        $user->generateEmailConfirmToken();
         $user->generateAuthKey();
         return $user;
     }
@@ -48,25 +52,14 @@ class User extends ActiveRecord implements IdentityInterface
         $this->removeEmailConfirmToken();
     }
 
-    /**
-     * Generates new password reset token
-     */
-    private function generateEmailConfirmToken()
+    public static function signupByNetwork($network, $identity): self
     {
-        $this->email_confirm_token = Yii::$app->security->generateRandomString();
-    }
-
-    /**
-     * Removes email confirm token
-     */
-    private function removeEmailConfirmToken()
-    {
-        $this->email_confirm_token = null;
-    }
-
-    public function isWait(): bool
-    {
-        return $this->status === self::STATUS_WAIT;
+        $user = new User();
+        $user->created_at = time();
+        $user->status = self::STATUS_ACTIVE;
+        $user->generateAuthKey();
+        $user->networks = [Network::create($network, $identity)];
+        return $user;
     }
 
     public function requestPasswordReset(): void
@@ -86,13 +79,22 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
+    public function isWait(): bool
+    {
+        return $this->status === self::STATUS_WAIT;
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    public function getNetworks(): ActiveQuery
+    {
+        return $this->hasMany(Network::className(), ['user_id' => 'id']);
+    }
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function tableName()
     {
@@ -100,28 +102,37 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
         return [
             TimestampBehavior::class,
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relations' => ['networks'],
+            ],
+        ];
+    }
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_WAIT]],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentity($id)
     {
@@ -129,7 +140,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
@@ -176,14 +187,13 @@ class User extends ActiveRecord implements IdentityInterface
         if (empty($token)) {
             return false;
         }
-
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -191,7 +201,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAuthKey()
     {
@@ -199,7 +209,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validateAuthKey($authKey)
     {
@@ -233,5 +243,21 @@ class User extends ActiveRecord implements IdentityInterface
     private function generateAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * Generates new password reset token
+     */
+    private function generateEmailConfirmToken()
+    {
+        $this->email_confirm_token = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * Removes email confirm token
+     */
+    private function removeEmailConfirmToken()
+    {
+        $this->email_confirm_token = null;
     }
 }
