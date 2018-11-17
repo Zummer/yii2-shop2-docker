@@ -1,6 +1,7 @@
 <?php
 namespace shop\entities\User;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use Webmozart\Assert\Assert;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -52,14 +53,32 @@ class User extends ActiveRecord implements IdentityInterface
         $this->removeEmailConfirmToken();
     }
 
-    public static function signupByNetwork($network, $identity): self
+    public static function signupByNetwork($network, $identity, $email): self
     {
+        if (empty($email)) {
+            throw new \DomainException('Email is required.');
+        }
+
         $user = new User();
+        $user->username = $network . $identity;
+        $user->email = $email;
         $user->created_at = time();
         $user->status = self::STATUS_ACTIVE;
         $user->generateAuthKey();
         $user->networks = [Network::create($network, $identity)];
         return $user;
+    }
+
+    public function attachNetwork($network, $identity): void
+    {
+        $networks = $this->networks;
+        foreach ($networks as $current) {
+            if ($current->isFor($network, $identity)) {
+                throw new \DomainException('Network is already attached.');
+            }
+        }
+        $networks[] = Network::create($network, $identity);
+        $this->networks = $networks;
     }
 
     public function requestPasswordReset(): void

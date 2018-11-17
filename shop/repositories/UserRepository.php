@@ -82,5 +82,14 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::find()->joinWith('networks n')->andWhere(['n.network' => $network, 'n.identity' => $identity])->one();
     }
+
+    /**
+     * @param $id
+     * @return User
+     */
+    public function get($id): User
+    {
+        return $this->getByConditions(['id' => $id]);
+    }
 }
 

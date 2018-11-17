@@ -6,6 +6,8 @@ use shop\repositories\UserRepository;
 use shop\repositories\UserRepositoryInterface;
 use shop\services\auth\AuthService;
 use shop\services\auth\AuthServiceInterface;
+use shop\services\auth\NetworkService;
+use shop\services\auth\NetworkServiceInterface;
 use shop\services\auth\PasswordResetServiceInterface;
 use shop\services\auth\SignupService;
 use shop\services\auth\SignupServiceInterface;
@@ -26,15 +28,16 @@ class SetUp implements BootstrapInterface
     {
         $container = Yii::$container;
 
-        $container->setSingleton(AuthServiceInterface::class, AuthService::class);
         $container->setSingleton(UserRepositoryInterface::class, UserRepository::class);
-
+        $container->setSingleton(NetworkServiceInterface::class, NetworkService::class);
+        $container->setSingleton(AuthServiceInterface::class, AuthService::class);
         $container->setSingleton(SignupServiceInterface::class, function () use ($app, $container) {
+            $users = $container->get(UserRepositoryInterface::class);
             return new SignupService(
                 [$app->params['supportEmail'] => $app->name . ' robot'],
                 $app->mailer,
                 'Signup confirm for ' . $app->name,
-                $container->get(UserRepositoryInterface::class)
+                $users
             );
         });
 
@@ -52,11 +55,12 @@ class SetUp implements BootstrapInterface
         });
 
         $container->setSingleton(PasswordResetServiceInterface::class, function () use ($app, $container) {
+            $users = $container->get(UserRepositoryInterface::class);
             return new PasswordResetService(
                 [$app->params['supportEmail'] => $app->name . ' robot'],
                 $app->mailer,
                 'Password reset for ' . $app->name,
-                $container->get(UserRepositoryInterface::class)
+                $users
             );
         });
     }
