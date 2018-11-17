@@ -31,7 +31,7 @@ class AuthController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $user = $this->service->auth($form);
-                $duration = $form->rememberMe ? 3600 * 24 * 30 : 0;
+                $duration = $form->rememberMe ? Yii::$app->params['user.rememberMeDuration'] : 0;
                 Yii::$app->user->login($user, $duration);
                 return $this->goBack();
             } catch (\DomainException $e) {
