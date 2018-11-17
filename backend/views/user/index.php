@@ -5,7 +5,7 @@ use yii\grid\GridView;
 use yii\grid\ActionColumn;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\forms\UserSearh */
+/* @var $searchModel backend\forms\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Users';
