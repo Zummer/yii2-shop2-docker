@@ -1,5 +1,6 @@
 <?php
 
+use kartik\date\DatePicker;
 use shop\entities\User\User;
 use shop\helpers\UserHelper;
 use yii\helpers\Html;
@@ -15,9 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <p>
         <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -29,7 +27,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterModel' => $searchModel,
                 'columns' => [
                     'id',
-                    'created_at:datetime',
+                    [
+                        'attribute' => 'created_at',
+                        'filter' => DatePicker::widget([
+                            'model' => $searchModel,
+                            'attribute' => 'date_from',
+                            'attribute2' => 'date_to',
+                            'type' => DatePicker::TYPE_RANGE,
+                            'separator' => '-',
+                            'pluginOptions' => [
+                                'todayHighlight' => true,
+                                'autoclose'=>true,
+                                'format' => 'yyyy-mm-dd',
+                            ],
+                        ]),
+                        'format' => 'datetime',
+                    ],
                     [
                         'attribute' => 'username',
                         'value' => function (User $model) {
