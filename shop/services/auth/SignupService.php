@@ -1,10 +1,12 @@
 <?php
 namespace shop\services\auth;
 
-use shop\services\auth\SignupServiceInterface;
+use shop\access\Rbac;
 use shop\entities\User\User;
-use shop\repositories\UserRepository;
+use shop\repositories\UserRepositoryInterface;
 use shop\forms\auth\SignupForm;
+use shop\services\RoleManagerInterface;
+use shop\services\TransactionManagerInterface;
 use yii\mail\MailerInterface;
 
 class SignupService implements SignupServiceInterface
@@ -13,18 +15,24 @@ class SignupService implements SignupServiceInterface
     private $supportEmail;
     private $emailSubject;
     private $users;
+    private $roles;
+    private $transaction;
 
     public function __construct(
         array $supportEmail,
         MailerInterface $mailer,
         string $emailSubject,
-        UserRepository $users
+        UserRepositoryInterface $users,
+        RoleManagerInterface $roles,
+        TransactionManagerInterface $transaction
     )
     {
         $this->mailer = $mailer;
         $this->supportEmail = $supportEmail;
         $this->emailSubject = $emailSubject;
         $this->users = $users;
+        $this->roles = $roles;
+        $this->transaction = $transaction;
     }
 
     public function signup(SignupForm $form): void
@@ -43,7 +51,11 @@ class SignupService implements SignupServiceInterface
             $form->password
         );
 
-        $this->users->save($user);
+        $this->transaction->wrap(function () use ($user) {
+            $this->users->save($user);
+            $this->roles->assign($user->id, Rbac::ROLE_USER);
+        });
+
 
         $sent = $this->mailer
             ->compose(

@@ -39,4 +39,6 @@ interface UserRepositoryInterface
      * @return User|null
      */
     public function findByUsernameOrEmail(string $value): ?User;
+
+    public function get($id): User;
 }

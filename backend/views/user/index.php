@@ -6,6 +6,8 @@ use shop\helpers\UserHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\grid\ActionColumn;
+use backend\widgets\grid\RoleColumn;
+use shop\access\Rbac;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\forms\UserSearch */
@@ -16,9 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <p>
-        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php if (\Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN)): ?>
+        <p>
+            <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
+    <?php endif; ?>
 
     <div class="box">
         <div class="box-body">
@@ -52,6 +56,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'email:email',
                     [
+                        'attribute' => 'role',
+                        'class' => RoleColumn::class,
+                        'filter' => $searchModel->rolesList(),
+                    ],
+                    [
                         'attribute' => 'status',
                         'filter' => UserHelper::statusList(),
                         'value' => function (User $model) {
@@ -59,7 +68,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'raw',
                     ],
-                    ['class' => ActionColumn::class],
+                    [
+                        'class' => ActionColumn::class,
+                        'visibleButtons' => [
+                             'update' => \Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN),
+                             'delete' => \Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN),
+                        ]
+                    ],
                 ],
             ]); ?>
         </div>

@@ -3,22 +3,23 @@
 namespace backend\controllers;
 
 use shop\forms\manage\User\UserCreateForm;
-use shop\services\manage\UserManageService;
+use shop\forms\manage\User\UserEditForm;
+use shop\services\manage\UserManageServiceInterface;
 use Yii;
-use shop\entities\User\user;
+use shop\entities\User\User;
 use backend\forms\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * UserController implements the CRUD actions for user model.
+ * UserController implements the CRUD actions for User model.
  */
 class UserController extends Controller
 {
     private $service;
 
-    public function __construct($id, $module, UserManageService $service, $config = [])
+    public function __construct($id, $module, UserManageServiceInterface $service, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
@@ -40,7 +41,7 @@ class UserController extends Controller
     }
 
     /**
-     * Lists all user models.
+     * Lists all User models.
      * @return mixed
      */
     public function actionIndex()
@@ -55,7 +56,7 @@ class UserController extends Controller
     }
 
     /**
-     * Displays a single user model.
+     * Displays a single User model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -68,8 +69,7 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new user model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * Creates a new User model.
      * @return mixed
      */
     public function actionCreate()
@@ -92,31 +92,34 @@ class UserController extends Controller
     }
 
     /**
-     * Updates an existing user model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * Updates an existing User model.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $user = $this->findModel($id);
+        $form = new UserEditForm($user);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->edit($user->id, $form);
+                return $this->redirect(['view', 'id' => $user->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'model' => $form,
+            'user' => $user,
         ]);
     }
 
     /**
-     * Deletes an existing user model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Deletes an existing User model.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
@@ -126,18 +129,18 @@ class UserController extends Controller
     }
 
     /**
-     * Finds the user model based on its primary key value.
+     * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return user the loaded model
+     * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = user::findOne($id)) !== null) {
+        if (($model = User::findOne($id)) !== null) {
             return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
