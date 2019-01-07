@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <?php if (\Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN)): ?>
+    <?php if (\Yii::$app->user->can(Rbac::CREATE_USER)): ?>
         <p>
             <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
         </p>
@@ -71,8 +71,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => ActionColumn::class,
                         'visibleButtons' => [
-                             'update' => \Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN),
-                             'delete' => \Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN),
+                             'update' => function (User $model) {
+                                 return \Yii::$app->user->can(Rbac::UPDATE_USER, ['userId' => $model->id]);
+                             },
+                             'delete' => \Yii::$app->user->can(Rbac::DELETE_USER),
                         ]
                     ],
                 ],

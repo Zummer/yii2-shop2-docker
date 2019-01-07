@@ -61,13 +61,7 @@ return [
         'rules' => [
             [
                 'allow' => true,
-                'actions' => ['index', 'view', 'logout'],
                 'roles' => ['@'],
-            ],
-            [
-                'allow' => true,
-                'actions' => ['create', 'update', 'delete'],
-                'roles' => ['backend_admin_permission'],
             ],
         ],
     ],

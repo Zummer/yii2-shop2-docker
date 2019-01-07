@@ -17,18 +17,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php if (\Yii::$app->user->can(Rbac::PERMISSION_BACKEND_ADMIN)): ?>
         <p>
-            <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
-                    'method' => 'post',
-                ],
-            ]) ?>
+            <?php if (\Yii::$app->user->can(Rbac::UPDATE_USER, ['userId' => $model->id])): ?>
+                <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?php endif; ?>
+            <?php if (\Yii::$app->user->can(Rbac::DELETE_USER)): ?>
+                <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            <?php endif; ?>
+
         </p>
-    <?php endif; ?>
 
     <div class="box">
         <div class="box-body">

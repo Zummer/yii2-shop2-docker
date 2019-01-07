@@ -8,16 +8,21 @@
 
 namespace console\controllers;
 
+use common\rbac\UserOwnerRule;
 use yii\console\Controller;
 
 class RbacController extends Controller
 {
-    public function actionInit()
-    {
-        $am = \Yii::$app->authManager;
-        $user = $am->createRole('user');
-        $user->description = 'User Role';
+    private $authManager;
 
-        $am->add($user);
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->authManager = \Yii::$app->getAuthManager();
+    }
+
+    public function actionAddUserOwnerRule() {
+        $rule = new UserOwnerRule();
+        $this->authManager->add($rule);
     }
 }
