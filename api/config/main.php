@@ -25,6 +25,7 @@ return [
         'request' => [
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
+                'application/xml' => 'yii\web\XmlParser',
             ],
         ],
         'response' => [
@@ -37,7 +38,7 @@ return [
             ],
         ],
         'user' => [
-            'identityClass' => 'shop\entities\User\User',
+            'identityClass' => 'common\auth\Identity',
             'enableAutoLogin' => false,
             'enableSession' => false,
         ],
@@ -56,6 +57,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 '' => 'site/index',
+                'auth' => 'site/login',
             ],
         ],
     ],

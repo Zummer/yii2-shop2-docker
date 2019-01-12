@@ -91,5 +91,15 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->getByConditions(['id' => $id]);
     }
+
+    public function find($id): ?User
+    {
+        return User::findOne($id);
+    }
+
+    public function findActiveById($id): ?User
+    {
+        return User::findOne(['id' => $id, 'status' => User::STATUS_ACTIVE]);
+    }
 }
 

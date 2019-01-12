@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use common\auth\Identity;
 use shop\services\auth\AuthServiceInterface;
 use Yii;
 use yii\web\Controller;
@@ -48,7 +49,7 @@ class AuthController extends Controller
             try {
                 $user = $this->authService->auth($form);
                 $duration = $form->rememberMe ? 3600 * 24 * 30 : 0;
-                Yii::$app->user->login($user, $duration);
+                Yii::$app->user->login(new Identity($user), $duration);
                 return $this->goBack();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

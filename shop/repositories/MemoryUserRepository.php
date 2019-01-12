@@ -42,4 +42,19 @@ class MemoryUserRepository implements UserRepositoryInterface
     {
         // TODO: Implement findByUsernameOrEmail() method.
     }
+
+    public function get($id): User
+    {
+        // TODO: Implement get() method.
+    }
+
+    public function find($id): ?User
+    {
+        // TODO: Implement find() method.
+    }
+
+    public function findActiveById($id): ?User
+    {
+        // TODO: Implement findActiveById() method.
+    }
 }

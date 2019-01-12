@@ -9,7 +9,7 @@ return [
     'components' => [
         'user' => [
             'class' => 'yii\web\User',
-            'identityClass' => 'shop\entities\User\User',
+            'identityClass' => 'common\auth\Identity',
             'identityCookie' => [
                 'name' => '_identity',
                 'httpOnly' => true,

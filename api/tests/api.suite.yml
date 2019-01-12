@@ -3,7 +3,9 @@ modules:
     enabled:
         - REST:
             depends: PhpBrowser
-            url: 'http://api.shop.loc/index-test.php
+# запуск сервера внутри докер контейнера php: php -S 127.0.0.1:8080 -t api/web
+# запуск тестов vendor/bin/codecept -- -c api
+            url: 'http://127.0.0.1:8080/index-test.php'
             part: [json]
         - Yii2:
             part: [orm, fixtures]

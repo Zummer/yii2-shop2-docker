@@ -41,4 +41,8 @@ interface UserRepositoryInterface
     public function findByUsernameOrEmail(string $value): ?User;
 
     public function get($id): User;
+
+    public function find($id): ?User;
+
+    public function findActiveById($id): ?User;
 }

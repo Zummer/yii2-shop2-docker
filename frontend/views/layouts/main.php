@@ -2,6 +2,7 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+/* @var $identity \common\auth\Identity */
 
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -40,15 +41,17 @@ AppAsset::register($this);
         ['label' => 'About', 'url' => ['/site/about']],
         ['label' => 'Contact', 'url' => ['/contact/index']],
     ];
+
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/auth/signup/request']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/auth/auth/login']];
     } else {
+        $identity = Yii::$app->user->identity;
         $menuItems[] = ['label' => 'Cabinet', 'url' => ['/cabinet/default/index']];
         $menuItems[] = '<li>'
             . Html::beginForm(['/auth/auth/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                'Logout (' . $identity->getUsername() . ')',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
