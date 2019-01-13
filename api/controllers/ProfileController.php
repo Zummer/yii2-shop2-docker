@@ -4,6 +4,7 @@ namespace api\controllers;
 
 use shop\entities\User\User;
 use shop\forms\manage\User\UserEditForm;
+use shop\helpers\UserHelper;
 use shop\services\manage\UserManageServiceInterface;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
@@ -34,13 +35,7 @@ class ProfileController extends Controller
     {
         $user = $this->findModel();
 
-        return [
-            'id'=> $user->id,
-            'username' => $user->username,
-            'email' => $user->email,
-            'status' => $user->isActive() ? 'active' : 'not active',
-            'description' => $user->description,
-        ];
+        return $this->serializeUser($user);
     }
 
     public function actionUpdate()
@@ -54,13 +49,7 @@ class ProfileController extends Controller
                 $this->service->edit($user->id, $form);
                 $user = $this->findModel();
 
-                return [
-                    'id'=> $user->id,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                    'status' => $user->isActive() ? 'active' : 'not active',
-                    'description' => $user->description,
-                ];
+                return $this->serializeUser($user);
             } catch (\Exception $e) {
                 throw new ServerErrorHttpException($e->getMessage());
             }
@@ -80,5 +69,16 @@ class ProfileController extends Controller
     public function findModel()
     {
         return User::findOne(\Yii::$app->user->id);
+    }
+
+    public function serializeUser(User $user): array
+    {
+        return [
+            'id'=> $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'status' => UserHelper::statusName($user->status),
+            'description' => $user->description,
+        ];
     }
 }

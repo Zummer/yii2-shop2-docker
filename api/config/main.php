@@ -60,6 +60,7 @@ return [
                 '' => 'site/index',
                 'auth' => 'site/login',
                 'GET profile' => 'profile/index',
+                'GET users' => 'user/index',
                 'PUT,PATCH profile' => 'profile/update',
             ],
         ],

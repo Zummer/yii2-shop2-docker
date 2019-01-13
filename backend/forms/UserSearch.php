@@ -4,7 +4,7 @@ namespace backend\forms;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use shop\entities\User\user;
+use shop\entities\User\User;
 use yii\helpers\ArrayHelper;
 
 /**
