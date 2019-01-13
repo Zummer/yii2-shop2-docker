@@ -4,7 +4,6 @@ namespace common\auth;
 
 use shop\entities\User\User;
 use shop\repositories\UserRepository;
-use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
 
 class Identity implements IdentityInterface
@@ -24,7 +23,12 @@ class Identity implements IdentityInterface
 
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        $data = Token::find()
+            ->andWhere(['token' => $token])
+            ->andWhere(['>', 'expired_at', time()])
+            ->one();
+
+        return !empty($data['user_id']) ? static::findIdentity($data['user_id']) : null;
     }
 
     public function getId(): int

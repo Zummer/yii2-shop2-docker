@@ -23,6 +23,7 @@ return [
     'modules' => [],
     'components' => [
         'request' => [
+            'enableCookieValidation' => false,
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
                 'application/xml' => 'yii\web\XmlParser',
@@ -58,6 +59,7 @@ return [
             'rules' => [
                 '' => 'site/index',
                 'auth' => 'site/login',
+                'profile' => 'profile/index',
             ],
         ],
     ],

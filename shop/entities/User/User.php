@@ -1,6 +1,7 @@
 <?php
 namespace shop\entities\User;
 
+use common\auth\Token;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -127,8 +128,14 @@ class User extends ActiveRecord
 
     public function getNetworks(): ActiveQuery
     {
-        return $this->hasMany(Network::className(), ['user_id' => 'id']);
+        return $this->hasMany(Network::class, ['user_id' => 'id']);
     }
+
+    public function getToken()
+    {
+        return $this->hasMany(Token::class, ['user_id' => 'id']);
+    }
+
     /**
      * @inheritdoc
      */
