@@ -22,6 +22,7 @@ use yii\db\ActiveRecord;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property string $description
  *
  * @property Network[] $networks
  */
@@ -42,10 +43,11 @@ class User extends ActiveRecord
         return $user;
     }
 
-    public function edit(string $username, string $email): void
+    public function edit(string $username, string $email, string $description): void
     {
         $this->username = $username;
         $this->email = $email;
+        $this->description = $description;
         $this->updated_at = time();
     }
 

@@ -11,12 +11,14 @@ class UserEditForm extends Model
     public $username;
     public $email;
     public $role;
+    public $description;
 
     public $_user;
     private $_manager;
 
     public function __construct(User $user, $config = [])
     {
+        $this->description = $user->description;
         $this->username = $user->username;
         $this->email = $user->email;
         $this->_manager = \Yii::$app->authManager;
@@ -31,7 +33,7 @@ class UserEditForm extends Model
         return [
             [['username', 'email', 'role'], 'required'],
             ['email', 'email'],
-            ['email', 'string', 'max' => 255],
+            [['email', 'description'], 'string', 'max' => 255],
             [['username', 'email'], 'unique', 'targetClass' => User::class, 'filter' => ['<>', 'id', $this->_user->id]],
         ];
     }

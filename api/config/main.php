@@ -59,7 +59,8 @@ return [
             'rules' => [
                 '' => 'site/index',
                 'auth' => 'site/login',
-                'profile' => 'profile/index',
+                'GET profile' => 'profile/index',
+                'PUT,PATCH profile' => 'profile/update',
             ],
         ],
     ],

@@ -48,7 +48,8 @@ class UserManageService implements UserManageServiceInterface
         $user = $this->repository->get($id);
         $user->edit(
             $form->username,
-            $form->email
+            $form->email,
+            $form->description
         );
 
         $this->transaction->wrap(function () use ($user, $form) {
