@@ -18,6 +18,16 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * @param User $user
+     */
+    public function delete(User $user): void
+    {
+        if(!$user->delete()) {
+            throw new \RuntimeException('Deleting error.');
+        }
+    }
+
+    /**
      * @param string $email
      * @return User
      */

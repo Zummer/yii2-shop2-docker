@@ -23,11 +23,8 @@ class UserManageService implements UserManageServiceInterface
 
     public function create(UserCreateForm $form): User
     {
-        $user = User::create(
-            $form->username,
-            $form->email,
-            $form->password
-        );
+        $password = !empty($form->password) ? $form->password : '';
+        $user = User::create($form->username, $form->email, $password);
 
         $this->transaction->wrap(function () use ($user, $form) {
             $this->repository->save($user);
@@ -46,15 +43,19 @@ class UserManageService implements UserManageServiceInterface
     public function edit($id, UserEditForm $form): void
     {
         $user = $this->repository->get($id);
-        $user->edit(
-            $form->username,
-            $form->email,
-            $form->description
-        );
+        $description = !empty($form->description) ? $form->description : '';
+
+        $user->edit($form->username, $form->email, $description);
 
         $this->transaction->wrap(function () use ($user, $form) {
             $this->repository->save($user);
             $this->roles->assign($user->id, $form->role);
         });
+    }
+
+    public function remove($id): void
+    {
+        $user = $this->repository->get($id);
+        $this->repository->delete($user);
     }
 }

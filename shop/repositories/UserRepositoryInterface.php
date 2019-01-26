@@ -11,6 +11,11 @@ interface UserRepositoryInterface
     public function save(User $user): void;
 
     /**
+     * @param \shop\entities\User\User $user
+     */
+    public function delete(User $user): void;
+
+    /**
      * @param string $email
      * @return \shop\entities\User\User
      */

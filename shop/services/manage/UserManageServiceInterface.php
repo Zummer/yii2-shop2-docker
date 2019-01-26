@@ -19,4 +19,6 @@ interface UserManageServiceInterface
     public function assignRole($id, $role): void;
 
     public function edit($id, UserEditForm $form): void;
+
+    public function remove($id): void;
 }

@@ -70,4 +70,9 @@ class UserSearch extends Model
     {
         return ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'description');
     }
+
+    public function formName(): string
+    {
+        return 's';
+    }
 }

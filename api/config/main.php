@@ -62,6 +62,7 @@ return [
                 'GET profile' => 'profile/index',
                 'GET users' => 'user/index',
                 'PUT,PATCH profile' => 'profile/update',
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
             ],
         ],
     ],
